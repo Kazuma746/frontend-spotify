@@ -275,10 +275,14 @@ const AddToPlaylistModal = ({ isOpen, onClose, trackId }) => {
 
     useEffect(() => {
         if (isOpen) {
+            if (!trackId) {
+                setMessage({ type: 'error', text: "L'identifiant de la piste est requis" });
+                return;
+            }
             loadPlaylists();
             setMessage(null);
         }
-    }, [isOpen]);
+    }, [isOpen, trackId]);
 
     const loadPlaylists = async () => {
         try {
@@ -295,6 +299,11 @@ const AddToPlaylistModal = ({ isOpen, onClose, trackId }) => {
         try {
             setIsLoading(true);
             setMessage(null);
+            
+            if (!trackId) {
+                throw new Error("L'identifiant de la piste est requis");
+            }
+            
             const response = await playlistApi.addTrackToPlaylist(playlistId, trackId);
             setMessage({ 
                 type: 'success', 
@@ -317,6 +326,11 @@ const AddToPlaylistModal = ({ isOpen, onClose, trackId }) => {
     const handleCreatePlaylist = async () => {
         if (!newPlaylistName.trim()) {
             setMessage({ type: 'error', text: t('addToPlaylistModal.error.enterName') });
+            return;
+        }
+
+        if (!trackId) {
+            setMessage({ type: 'error', text: "L'identifiant de la piste est requis" });
             return;
         }
 

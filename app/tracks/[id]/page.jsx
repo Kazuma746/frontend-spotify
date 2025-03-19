@@ -321,6 +321,7 @@ export default function TrackPage({ params }) {
             router.push('/login');
             return;
         }
+        setSelectedTrackId(track.id || params.id);
         setIsModalOpen(true);
     };
 
@@ -415,9 +416,8 @@ export default function TrackPage({ params }) {
                     isOpen={isModalOpen}
                     onClose={() => {
                         setIsModalOpen(false);
-                        setSelectedTrackId(null);
                     }}
-                    trackId={selectedTrackId}
+                    trackId={selectedTrackId || track?.id || params.id}
                 />
             </ContentWrapper>
         </Container>

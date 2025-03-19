@@ -73,6 +73,11 @@ const playlistApi = {
     // Ajouter une piste à une playlist
     addTrackToPlaylist: async (playlistId, trackId) => {
         try {
+            // Vérification que trackId est défini et valide
+            if (!trackId) {
+                throw new Error("L'identifiant de la piste est requis");
+            }
+            
             const response = await fetchWithAuth(`/playlists/${playlistId}/tracks`, {
                 method: 'POST',
                 body: JSON.stringify({ trackId }),
