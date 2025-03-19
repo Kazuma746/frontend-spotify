@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { 
+      "source": "/api/:path*", 
+      "destination": "https://backend-spotify-f61v.onrender.com/api/:path*" 
+    }
+  ]
+}
