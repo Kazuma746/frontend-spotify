@@ -3,8 +3,13 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 // Fonction utilitaire pour gérer les erreurs
 const handleResponse = async (response) => {
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Une erreur est survenue');
+    try {
+      const error = await response.json();
+      throw new Error(error.message || `Erreur ${response.status}: ${response.statusText}`);
+    } catch (e) {
+      // Si on ne peut pas analyser le JSON (par exemple, si la réponse n'est pas du JSON)
+      throw new Error(`Erreur ${response.status}: ${response.statusText}`);
+    }
   }
   return response.json();
 };
@@ -30,10 +35,25 @@ export const musicApi = {
     // Récupération de tous les morceaux avec pagination
     getAllTracks: async (page = 1, limit = 10) => {
         try {
+            console.log(`Appel API: ${BASE_URL}/tracks?page=${page}&limit=${limit}`);
             const response = await fetch(`${BASE_URL}/tracks?page=${page}&limit=${limit}`);
-            const data = await handleResponse(response);
+            console.log('Statut de la réponse:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Erreur API tracks:', response.status, errorText);
+                return {
+                    success: false,
+                    data: [],
+                    pagination: { totalItems: 0 },
+                    error: `Erreur ${response.status}: ${errorText || 'Erreur inconnue'}`,
+                };
+            }
+            
+            const data = await response.json();
             return data;
         } catch (error) {
+            console.error('Exception dans getAllTracks:', error);
             return {
                 success: false,
                 data: [],

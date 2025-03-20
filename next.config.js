@@ -62,12 +62,10 @@ const nextConfig = {
         return config;
     },
     async rewrites() {
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
-        const apiUrl = baseUrl.replace('/api', '');
         return [
             {
                 source: '/api/:path*',
-                destination: `${apiUrl}/:path*`
+                destination: 'https://backend-spotify-f61v.onrender.com/api/:path*'
             }
         ]
     },
