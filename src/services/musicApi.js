@@ -23,12 +23,8 @@ const fetchWithAuth = async (endpoint, options = {}) => {
         ...options.headers,
     };
 
-    // Corrige le problème de double '/api' dans les URLs
-    const formattedEndpoint = endpoint.startsWith('/') 
-        ? (BASE_URL.endsWith('/api') ? endpoint.replace(/^\/api/, '') : endpoint)
-        : endpoint;
-
-    const response = await fetch(`${BASE_URL}${formattedEndpoint}`, {
+    // Nous n'avons pas besoin de modifier l'endpoint car next.config.js gère la redirection
+    const response = await fetch(`${BASE_URL}${endpoint}`, {
         ...options,
         headers,
     });
