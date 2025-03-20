@@ -194,13 +194,24 @@ export default function TracksPage() {
                 ITEMS_PER_PAGE
             );
 
-            if (!response.success) {
+            console.log("Réponse API tracks:", response);
+
+            if (!response || !response.success) {
                 throw new Error(t('common.error.invalidResponse'));
             }
 
+            // Assurons-nous que nous avons des données valides
+            const tracksData = response.data || [];
+            console.log("Données des tracks:", tracksData.slice(0, 2));
             
             // Traiter les pistes pour s'assurer que les images sont correctement gérées
-            const processedTracks = response.data.map(track => {
+            const processedTracks = tracksData.map(track => {
+                // Vérifier la structure des données
+                if (!track || !track.title) {
+                    console.warn("Track invalide:", track);
+                    return null;
+                }
+
                 // Utiliser directement coverUrl s'il existe
                 if (track.coverUrl) {
                     return track;
@@ -222,15 +233,14 @@ export default function TracksPage() {
                     ...track,
                     coverUrl
                 };
-            });
-            
+            }).filter(Boolean); // Filtrer les éléments null
             
             setTracks(processedTracks);
             setTotalItems(response.pagination?.totalItems || 0);
             setTotalPages(response.pagination?.totalPages || 0);
         } catch (error) {
             console.error("Erreur lors du chargement des morceaux:", error);
-            setError(t('tracks.error.loadFailed'));
+            setError(error.message || t('tracks.error.loadFailed'));
         } finally {
             setLoading(false);
         }
