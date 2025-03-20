@@ -189,12 +189,11 @@ export default function TracksPage() {
     const loadTracks = async (pageNumber) => {
         try {
             setLoading(true);
-            const response = await musicApi.getAllTracks(
+            // Utiliser notre API proxy interne pour éviter les problèmes CORS/redirection
+            const response = await musicApi.getTracksViaProxyApi(
                 pageNumber,
                 ITEMS_PER_PAGE
             );
-
-            console.log("Réponse API tracks:", response);
 
             if (!response || !response.success) {
                 throw new Error(t('common.error.invalidResponse'));
@@ -202,13 +201,11 @@ export default function TracksPage() {
 
             // Assurons-nous que nous avons des données valides
             const tracksData = response.data || [];
-            console.log("Données des tracks:", tracksData.slice(0, 2));
             
             // Traiter les pistes pour s'assurer que les images sont correctement gérées
             const processedTracks = tracksData.map(track => {
                 // Vérifier la structure des données
                 if (!track || !track.title) {
-                    console.warn("Track invalide:", track);
                     return null;
                 }
 
@@ -296,12 +293,12 @@ export default function TracksPage() {
             <Grid>
                 {tracks.map((track) => (
                     <Card
-                        key={track.id}
+                        key={track.id || track._id}
                         title={track.title}
                         subtitle={track.artistId?.name || "Artiste inconnu"}
                         imageUrl={track.coverUrl || DEFAULT_IMAGE}
                         type="track"
-                        onClick={() => router.push(`/tracks/${track.id}`)}
+                        onClick={() => router.push(`/tracks/${track.id || track._id}`)}
                         onPlay={() => handleTrackPlay(track)}
                         isPlaying={isCurrentTrack(track) && isPlaying}
                     />

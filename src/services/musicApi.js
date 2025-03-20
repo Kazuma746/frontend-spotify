@@ -239,4 +239,32 @@ export const musicApi = {
         });
         return handleResponse(response);
     },
+
+    // Récupération de tous les morceaux avec pagination (version API interne)
+    getTracksViaProxyApi: async (page = 1, limit = 10) => {
+        try {
+            // Utiliser notre API proxy interne au lieu de l'API directe
+            const response = await fetch(`/api/tracks?page=${page}&limit=${limit}`);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                return {
+                    success: false,
+                    data: [],
+                    pagination: { totalItems: 0 },
+                    error: `Erreur ${response.status}: ${errorText || 'Erreur inconnue'}`,
+                };
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            return {
+                success: false,
+                data: [],
+                pagination: { totalItems: 0 },
+                error: error.message,
+            };
+        }
+    },
 };
