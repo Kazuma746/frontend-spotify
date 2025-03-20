@@ -65,7 +65,7 @@ const nextConfig = {
         return [
             {
                 source: '/api/:path*',
-                destination: 'https://backend-spotify-f61v.onrender.com/api/:path*'
+                destination: 'https://backend-spotify-f61v.onrender.com/:path*'
             }
         ]
     },
